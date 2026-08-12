@@ -25,7 +25,7 @@ const config = {
     process.env.WEBHOOK_DOMAIN ||
       process.env.RENDER_EXTERNAL_URL ||
       "",
-  ).replace(/^https?:\\/\\//, "").replace(/\\/$/, ""),
+  .replace(/^https?:\/\//, "").replace(/\/$/, ""),
   webhookPath: process.env.WEBHOOK_PATH || "/telegram/webhook",
   webhookSecret: process.env.WEBHOOK_SECRET || "",
 };
