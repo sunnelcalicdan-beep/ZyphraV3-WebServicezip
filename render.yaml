@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: zyphra-file-analyzer-bot
+    runtime: node
+    plan: starter
+    rootDir: zyphra-file-analyzer-bot
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: ADMIN_ID
+        value: "7842341917"
+      - key: FREE_LIMIT
+        value: "5"
+      - key: FREE_MAX_MB
+        value: "10"
+      - key: VIP_MAX_MB
+        value: "50"
+      - key: VIP_LIMIT
+        value: "0"
+      - key: REFERRAL_URL
+        value: "https://t.me/CatAcccountGeneratorBot?start=ref_7842341917"
+      - key: DATABASE_PATH
+        value: "./data/bot.db"
+      - key: ENVIRONMENT
+        value: "production"
+      - key: WEBHOOK_PATH
+        value: "/telegram/webhook"
+      - key: WEBHOOK_SECRET
+        generateValue: true

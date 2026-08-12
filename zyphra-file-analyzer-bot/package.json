@@ -1,0 +1,20 @@
+{
+  "name": "zyphra-file-analyzer-bot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A safe Telegram bot that analyzes status information already present in local TXT files.",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "sql.js": "^1.13.0",
+    "telegraf": "^4.16.3"
+  }
+}

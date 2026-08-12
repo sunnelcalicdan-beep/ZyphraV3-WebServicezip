@@ -1,0 +1,877 @@
+BUILD REQUEST — ZYPHRA FILE ANALYZER TELEGRAM BOT
+
+Build a complete, production-ready Telegram bot called:
+
+✨ ZYPHRA FILE ANALYZER
+
+The bot must be written entirely in JavaScript and should be easy to install, configure, understand, and modify.
+
+IMPORTANT:
+The bot is a LOCAL TXT FILE ANALYZER. It must NOT attempt to log into CODM, MLBB, Garena, Moonton, Facebook, Google, or any other account provider, and it must NOT test passwords, cookies, session tokens, or credentials.
+
+The bot should analyze information already contained inside uploaded TXT files.
+
+==================================================
+1. TECHNOLOGY
+==================================================
+
+Use:
+
+- JavaScript
+- Node.js 20+
+- Telegram Bot API
+- Telegraf or another simple, well-maintained Telegram framework
+- SQLite for simple local database storage
+- dotenv for configuration
+
+Keep the code beginner-friendly.
+
+Use a clean structure such as:
+
+zyp hra-bot/
+├── src/
+│   ├── bot.js
+│   ├── config.js
+│   ├── database.js
+│   ├── parser.js
+│   ├── handlers.js
+│   ├── admin.js
+│   ├── premium.js
+│   └── utils.js
+├── data/
+├── results/
+├── package.json
+├── .env.example
+├── README.md
+└── .gitignore
+
+Do NOT hard-code the Telegram bot token.
+
+Use:
+
+BOT_TOKEN=
+
+in .env.
+
+==================================================
+2. ADMIN
+==================================================
+
+Admin Telegram ID:
+
+7842341917
+
+The admin must have access to:
+
+/admin
+/users
+/userinfo USER_ID
+/premium_add USER_ID
+/premium_remove USER_ID
+/ban USER_ID
+/unban USER_ID
+/stats
+/broadcast MESSAGE
+/maintenance_on
+/maintenance_off
+
+Only the configured ADMIN_ID can use these commands.
+
+==================================================
+3. START MENU
+==================================================
+
+/start should display a beautiful modern interface:
+
+✨ ZYPHRA FILE ANALYZER
+
+Welcome, USERNAME! 👋
+
+🎮 Analyze TXT files
+🔎 Detect CODM / MLBB
+🟢 Separate VALID records
+🔴 Separate INVALID records
+⚪ Separate UNKNOWN records
+🧹 Remove duplicates
+📊 View statistics
+
+⭐ PREMIUM
+⚡ Faster processing
+📦 Larger files
+♾️ Unlimited checks
+🧰 Premium tools
+
+Keyboard:
+
+📄 CHECK TXT     ⭐ PREMIUM
+🧰 TOOLS         📊 MY STATS
+🎁 REFERRAL      ❓ HELP
+
+Use inline keyboards where appropriate.
+
+==================================================
+4. TXT FILE CHECKER
+==================================================
+
+When the user presses:
+
+📄 CHECK TXT
+
+tell them:
+
+📄 ZYPHRA TXT ANALYZER
+
+Send your .txt file as a Telegram document.
+
+The bot should accept only TXT files.
+
+After receiving a TXT document:
+
+1. Check extension.
+2. Check file size.
+3. Download the document temporarily.
+4. Read it as UTF-8 text.
+5. Process it.
+6. Delete the temporary uploaded file afterward.
+7. Never permanently store sensitive record contents.
+
+Show a progress/loading sequence such as:
+
+⏳ Preparing analyzer...
+🔎 Reading file...
+🎮 Detecting game...
+🧹 Removing duplicates...
+📊 Generating results...
+✅ Complete!
+
+Do not fake progress for an excessive amount of time.
+
+==================================================
+5. GAME DETECTION
+==================================================
+
+Automatically detect the game from indicators already present in the TXT.
+
+CODM indicators can include:
+
+CODM
+CALL OF DUTY
+CALL OF DUTY MOBILE
+GARENA
+
+MLBB indicators can include:
+
+MLBB
+MOBILE LEGENDS
+MOONTON
+
+Use a scoring system.
+
+Possible results:
+
+🎮 CODM
+🎮 MLBB
+🎮 CODM + MLBB
+❓ UNKNOWN
+
+Do not contact any external game servers.
+
+==================================================
+6. RECORD PARSER
+==================================================
+
+Support multiple common TXT formats:
+
+A)
+
+record 1
+
+record 2
+
+record 3
+
+
+B)
+
+Account:
+...
+Status:
+VALID
+
+
+C)
+
+one record per line
+
+
+D)
+
+records separated by blank lines.
+
+Create:
+
+splitRecords()
+detectGame()
+detectStatus()
+removeDuplicates()
+analyzeFile()
+
+functions.
+
+Keep parser.js independent so it is easy to modify later.
+
+==================================================
+7. STATUS DETECTION
+==================================================
+
+The analyzer should classify records based ONLY on status information already contained in the TXT.
+
+VALID indicators:
+
+VALID
+CLEAN
+SUCCESS
+
+INVALID indicators:
+
+INVALID
+FAILED
+FAIL
+
+If both VALID and INVALID appear in the same record:
+
+INVALID takes priority.
+
+Anything without a recognized status:
+
+UNKNOWN
+
+Do NOT infer that an account works merely because an email, username, UID, or password exists.
+
+==================================================
+8. RESULT FILES
+==================================================
+
+After processing, create:
+
+valid.txt
+invalid.txt
+unknown.txt
+
+Only include records that were already identified by their status.
+
+Example:
+
+valid.txt
+----------------
+[record 1]
+[record 2]
+
+
+invalid.txt
+----------------
+[record 3]
+[record 4]
+
+
+unknown.txt
+----------------
+[record 5]
+
+Send the generated files back to the user.
+
+If a category has zero records, either don't send that file or send a clear message saying:
+
+"No VALID records found."
+
+==================================================
+9. SUMMARY
+==================================================
+
+After processing send:
+
+╔════════════════════════╗
+       ✦ ZYPHRA RESULT ✦
+╚════════════════════════╝
+
+🎮 GAME: CODM
+
+📦 TOTAL: 100
+
+🟢 VALID: 45
+🔴 INVALID: 40
+⚪ UNKNOWN: 15
+
+🧹 DUPLICATES REMOVED: 8
+
+⚡ PROCESSING TIME: 1.24s
+
+Then send the result files.
+
+==================================================
+10. FREE LIMIT
+==================================================
+
+Default:
+
+FREE_LIMIT=5
+
+Free users can perform 5 analyses per UTC day.
+
+After reaching the limit:
+
+⛔ DAILY LIMIT REACHED
+
+You have used all 5 free checks today.
+
+⭐ Upgrade to Premium for unlimited checks.
+
+Reset automatically at UTC midnight.
+
+==================================================
+11. FREE FILE SIZE
+==================================================
+
+Default:
+
+FREE_MAX_MB=10
+
+Free users can upload files up to 10 MB.
+
+If larger:
+
+❌ FILE TOO LARGE
+
+Free limit: 10 MB
+
+⭐ Premium users can upload larger files.
+
+==================================================
+12. PREMIUM
+==================================================
+
+Premium users get:
+
+⭐ Unlimited daily checks
+⚡ Faster processing
+📦 Larger file size
+🧰 Premium tools
+📊 Advanced statistics
+
+Configuration:
+
+VIP_MAX_MB=50
+VIP_LIMIT=0
+
+0 means unlimited.
+
+Premium status must be stored in the database.
+
+==================================================
+13. REFERRAL
+==================================================
+
+Referral destination:
+
+https://t.me/CatAcccountGeneratorBot?start=ref_7842341917
+
+Create:
+
+🎁 REFERRAL
+
+button.
+
+Display:
+
+🎁 PREMIUM REFERRAL
+
+Get Premium access through the referral:
+
+[OPEN REFERRAL]
+
+Do not automatically claim that someone became premium unless the application actually has a verified mechanism for doing so.
+
+Admin must be able to manually grant Premium.
+
+==================================================
+14. ADMIN PANEL
+==================================================
+
+/admin
+
+Display:
+
+👑 ZYPHRA ADMIN PANEL
+
+👥 Users
+⭐ Premium users
+📊 Total checks
+🟢 Valid records
+🔴 Invalid records
+⚪ Unknown records
+🚫 Banned users
+⚙️ Maintenance status
+
+Buttons:
+
+👥 USERS
+⭐ PREMIUM
+📊 STATISTICS
+🚫 BANNED
+⚙️ MAINTENANCE
+📢 BROADCAST
+
+==================================================
+15. USER MANAGEMENT
+==================================================
+
+Database users table:
+
+id
+telegram_id
+username
+first_name
+is_premium
+is_banned
+checks_today
+last_check_date
+created_at
+updated_at
+
+Admin can:
+
+ban user
+unban user
+grant premium
+remove premium
+view user
+view statistics
+
+==================================================
+16. DATABASE
+==================================================
+
+Use SQLite.
+
+Tables:
+
+users
+checks
+referrals
+settings
+
+checks should contain safe metadata only:
+
+id
+telegram_id
+filename
+game
+total
+valid_count
+invalid_count
+unknown_count
+duplicates_removed
+processing_time
+created_at
+
+Do NOT store:
+
+passwords
+cookies
+session tokens
+authentication tokens
+full uploaded records
+
+==================================================
+17. MY STATS
+==================================================
+
+📊 MY STATS
+
+Display:
+
+Total checks
+Total records processed
+VALID count
+INVALID count
+UNKNOWN count
+Duplicates removed
+Current plan
+Today's usage
+Lifetime usage
+
+==================================================
+18. TOOLS
+==================================================
+
+🧰 TOOLS
+
+Include safe utilities such as:
+
+🔍 TXT analyzer
+🧹 Duplicate remover
+📊 File statistics
+🎮 Game detector
+📄 TXT formatter
+
+Do not include credential testing or account-login tools.
+
+==================================================
+19. LOADING SYSTEM
+==================================================
+
+Make the bot feel polished.
+
+Use:
+
+⏳ Preparing...
+🔎 Analyzing...
+🎮 Detecting...
+🧹 Cleaning...
+📊 Calculating...
+✅ Complete!
+
+Edit the same Telegram message when possible instead of sending many messages.
+
+==================================================
+20. ERROR HANDLING
+==================================================
+
+Handle:
+
+Invalid file
+Empty file
+Unsupported extension
+File too large
+Telegram download failure
+Encoding problems
+Parser errors
+Database errors
+Rate limits
+Unexpected exceptions
+
+Never expose stack traces to users.
+
+Log technical errors server-side.
+
+==================================================
+21. SECURITY
+==================================================
+
+Very important:
+
+- Never hard-code BOT_TOKEN.
+- Use environment variables.
+- Never log BOT_TOKEN.
+- Never log passwords.
+- Never log cookies.
+- Never log session tokens.
+- Never store uploaded account records permanently.
+- Delete temporary files after processing.
+- Sanitize filenames.
+- Prevent path traversal.
+- Limit file sizes.
+- Rate-limit users.
+- Restrict admin commands to ADMIN_ID.
+- Validate all user input.
+
+==================================================
+22. ANTI-REVOKE / DATA SAFETY
+==================================================
+
+Do NOT implement a mechanism to bypass Telegram message/file revocation or platform security.
+
+Instead implement safe server-side logging:
+
+- check ID
+- Telegram user ID
+- filename
+- game
+- counts
+- processing time
+- timestamp
+
+Never store uploaded credentials or account contents in logs.
+
+==================================================
+23. BROADCAST
+==================================================
+
+Admin:
+
+/broadcast MESSAGE
+
+The bot should send the message to registered users with:
+
+- rate limiting
+- error handling
+- blocked-user handling
+- progress counter
+
+Example:
+
+📢 Broadcasting...
+
+Sent: 125
+Failed: 3
+Total: 128
+
+==================================================
+24. MAINTENANCE MODE
+==================================================
+
+Admin:
+
+/maintenance_on
+/maintenance_off
+
+When enabled:
+
+🔧 MAINTENANCE MODE
+
+The analyzer is temporarily unavailable.
+
+Please try again later.
+
+Admin can still access the admin panel.
+
+==================================================
+25. LOGGING
+==================================================
+
+Console logs should look like:
+
+[INFO] Bot started
+[INFO] Database connected
+[CHECK] User 123456 uploaded test.txt
+[CHECK] Game: CODM
+[CHECK] Total: 100
+[CHECK] Valid: 50
+[CHECK] Invalid: 40
+[CHECK] Unknown: 10
+[CHECK] Processing: 1.24s
+
+Never log the contents of uploaded files.
+
+==================================================
+26. CONFIGURATION
+==================================================
+
+Create .env.example:
+
+BOT_TOKEN=
+ADMIN_ID=7842341917
+
+FREE_LIMIT=5
+FREE_MAX_MB=10
+
+VIP_MAX_MB=50
+VIP_LIMIT=0
+
+REFERRAL_URL=https://t.me/CatAcccountGeneratorBot?start=ref_7842341917
+
+DATABASE_PATH=./data/bot.db
+
+ENVIRONMENT=development
+
+==================================================
+27. PACKAGE.JSON
+==================================================
+
+Create a complete package.json.
+
+Include scripts:
+
+npm start
+npm run dev
+
+Use Node.js 20+.
+
+==================================================
+28. README
+==================================================
+
+Create an extremely simple README.
+
+Explain:
+
+1. Install Node.js
+2. Clone repository
+3. Run:
+
+npm install
+
+4. Create:
+
+.env
+
+5. Add BOT_TOKEN
+
+6. Run:
+
+npm start
+
+7. Open Telegram
+8. Open the bot
+9. Press /start
+10. Upload a TXT file
+
+Also explain how to deploy to Render.
+
+==================================================
+29. RENDER
+==================================================
+
+Make it compatible with Render.
+
+Provide:
+
+render.yaml
+
+Use a Background Worker because Telegram polling is being used.
+
+Start command:
+
+npm start
+
+Environment variables:
+
+BOT_TOKEN
+ADMIN_ID
+FREE_LIMIT
+FREE_MAX_MB
+VIP_MAX_MB
+VIP_LIMIT
+REFERRAL_URL
+DATABASE_PATH
+
+Do not put secrets in GitHub.
+
+==================================================
+30. GITHUB
+==================================================
+
+Include:
+
+.gitignore
+
+with:
+
+.env
+node_modules/
+data/
+results/
+*.log
+
+Never commit:
+
+.env
+BOT_TOKEN
+database files
+uploaded TXT files
+generated result files
+
+==================================================
+31. EASY JAVASCRIPT
+==================================================
+
+This is extremely important.
+
+Make the JavaScript EASY TO UNDERSTAND.
+
+Avoid unnecessarily complicated architecture.
+
+Use clear functions such as:
+
+detectGame()
+splitRecords()
+detectStatus()
+removeDuplicates()
+analyzeFile()
+createResultFiles()
+checkUserLimit()
+isPremium()
+isAdmin()
+
+Add comments explaining important sections.
+
+Use async/await.
+
+Keep configuration centralized.
+
+==================================================
+32. FINAL USER EXPERIENCE
+==================================================
+
+The final bot should feel like:
+
+✨ ZYPHRA FILE ANALYZER
+
+/start
+   ↓
+Main Menu
+   ↓
+📄 CHECK TXT
+   ↓
+Upload TXT
+   ↓
+⏳ Loading
+   ↓
+🔎 Parse
+   ↓
+🎮 Detect Game
+   ↓
+🧹 Remove Duplicates
+   ↓
+📊 Generate Statistics
+   ↓
+🟢 VALID
+🔴 INVALID
+⚪ UNKNOWN
+   ↓
+📄 Send result files
+   ↓
+📊 Send summary
+
+Make the interface modern, clean, fast, and professional.
+
+==================================================
+33. DELIVERABLE
+==================================================
+
+Provide the COMPLETE project.
+
+Do NOT give pseudocode.
+
+Do NOT leave TODO placeholders.
+
+Provide:
+
+- all JavaScript files
+- package.json
+- .env.example
+- render.yaml
+- README.md
+- database initialization
+- parser
+- Telegram handlers
+- admin system
+- premium system
+- referral UI
+- statistics
+- limits
+- maintenance mode
+- error handling
+- logging
+- TXT processing
+- result file generation
+
+Everything should run after:
+
+npm install
+
+and:
+
+npm start
+
+The code should be written in simple JavaScript so that a beginner can easily edit it.
